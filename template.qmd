@@ -12,7 +12,7 @@ jupyter: julia-1.10
 # execution options
 execute:
   freeze: auto  
-  cache: true
+  #cache: true
 
 format: 
     html:
@@ -88,18 +88,16 @@ However, this function is written to take in only one file (or one year, equival
 However, taking in this vector means the output is a vector of Datasets.  However, we can use vcat to put it all together!
 
 ```{julia}
-years = 1928:2021
-annual_data = read_tides.(years)
-typeof(annual_data)
-df = vcat(annual_data...)
-first(df, 5)
-last(df, 5)
+years = 1928:2021;
+annual_data = read_tides.(years);
+typeof(annual_data);
+df = vcat(annual_data...);
 ```
 
 Finally, we'll make sure we drop any missing data.
 
 ```{julia}
-dropmissing!(df)
+dropmissing!(df);
 ```
 
 ## Plots
@@ -126,7 +124,6 @@ plot(
 The code below first takes advantage of the fact that the datetime column is written in a date format and creates a new column called month that is the month of each observation.  It then drops any missing values from the dataset.  Finally, it groups the data by month and calculates the mean of the lsl column for each month.  The general syntax is `combine(grouped_df, :column => function => :newcolumn)`.
 
 ```{julia}
-#| output: false
 df[!, :month] = Dates.month.(df.datetime) 
 dropmissing!(df, :lsl) 
 df_bymonth = groupby(df, :month) 
@@ -148,7 +145,6 @@ plot(
 The code here is the same as above, but the grouping is by day of the year instead of month.  The only other difference is that the xticks are now every 20 days instead of every month.
 
 ```{julia}
-#| output: false
 df[!, :dayofyear] = Dates.dayofyear.(df.datetime) 
 dropmissing!(df, :lsl) 
 df_byday = groupby(df, :dayofyear) 
